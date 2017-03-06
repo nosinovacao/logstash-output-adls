@@ -1,5 +1,4 @@
-Elasticsearch
-Copyright 2012-2015 Elasticsearch
+Copyright (c) 2017 NOS Inovacao <http://www.nos.p
 
 This product includes software developed by The Apache Software
 Foundation (http://www.apache.org/).
