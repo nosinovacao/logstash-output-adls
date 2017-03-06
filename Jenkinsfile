@@ -10,8 +10,11 @@ try {
     node('dev && linux') {
         stage('build') {
             checkout scm
+            
+            // needed to remove previously generated garbage
+            sh "git clean -fdx"
 
-           // buildVersion and commit capture - Uses pcre regex
+            // buildVersion and commit capture - Uses pcre regex
             def versionRegexPattern = "s\\.version.*=.*'\\K(.*)(?=')"
             env.BuildVersion = sh(returnStdout: true, script: "cat logstash-output-adls.gemspec | grep -Po \"${versionRegexPattern}\"").trim()
             env.GIT_COMMIT = sh(returnStdout: true, script: "git rev-parse --verify HEAD").trim()
