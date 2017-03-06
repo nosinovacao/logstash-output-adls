@@ -2,13 +2,13 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-adls'
-  s.version         = '1.1.3'
+  s.version         = '1.1.4'
   s.licenses        = ['Apache-2.0']
-  s.summary         = "Plugin to write events to Azure DataLakeStore"
+  s.summary         = "Plugin to write events to Azure Data Lake Store (ADLS)"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
-  s.authors         = ["NOS Inovacao"]
+  s.authors         = ["NOS Inovação"]
   s.email           = 'nosi.metadata@nos.pt'
-  s.homepage        = "http://www.nos.pt"
+  s.homepage        = "https://github.com/nosinovacao/logstash-output-adls"
   s.require_paths = ["lib"]
 
   # Files

@@ -8,7 +8,9 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 
 ## Installing
 
-TBD
+```sh
+bin/logstash-plugin install logstash-output-adls
+```
 
 ### Manual installation on a already deployed Logstash:
 
