@@ -23,6 +23,7 @@ require 'logstash-output-adls_jars.rb'
 #     adls_client_id => "00000000-0000-0000-0000-000000000000"                                  # (required)
 #     adls_client_key => "XXXXXXXXXXXXXXXXXXXXXX"                                               # (required)
 #     path => "/logstash/%{+YYYY}/%{+MM}/%{+dd}/logstash-%{+HH}-%{[@metadata][cid]}.log"        # (required)
+#     test_path => "testfile"                                                                   # (optional, default "testfile")
 #     line_separator => "\n"                                                                    # (optional, default: "\n")
 #     created_files_permission => 755                                                           # (optional, default: 755)
 #     adls_token_expire_security_margin => 300                                                  # (optional, default: 300)
@@ -57,6 +58,9 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
   # as well as date fields in the joda time format, e.g.:
   # `/user/logstash/dt=%{+YYYY-MM-dd}/%{@source_host}-%{+HH}.log`
   config :path, :validate => :string, :required => true
+
+  # The path used for testing permissions in the datalake
+  config :test_path, :validate => :string, :default => "testfile"
 
   # Line separator for events written.
   config :line_separator, :validate => :string, :default => "\n"
@@ -96,7 +100,7 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
     def register()
 
       begin
-        @client = prepare_client(@adls_fqdn, @adls_client_id, @adls_token_endpoint, @adls_client_key)
+        @client = prepare_client(@adls_fqdn, @adls_client_id, @adls_token_endpoint, @adls_client_key,  @test_path)
       rescue => e
         logger.error("Cannot Login in ADLS. Aborting.... Exception: #{e.message}; Trace:#{e.backtrace.join("\n\t")}")
         exit 1
@@ -118,7 +122,7 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
         end
         def run
           begin
-            @parent.client = @parent.prepare_client(@parent.adls_fqdn, @parent.adls_client_id, @parent.adls_token_endpoint, @parent.adls_client_key)
+            @parent.client = @parent.prepare_client(@parent.adls_fqdn, @parent.adls_client_id, @parent.adls_token_endpoint, @parent.adls_client_key, @parent.test_path)
           rescue => e
             sleepTime = [@parent.retry_interval, @parent.max_retry_interval].min
             @parent.logger.error("ADLS Refresh OAuth Token Failed! Retrying in #{sleepTime.to_s} seconds... Exception: #{e.message}; Trace:#{e.backtrace.join("\n\t")}")         
@@ -143,7 +147,7 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
     @logger.info("Logstash ADLS output plugin is shutting down...")
   end
 
-  def prepare_client(accountFQDN, clientId, authTokenEndpoint, clientKey)
+  def prepare_client(accountFQDN, clientId, authTokenEndpoint, clientKey, testPath)
     azureToken = com.microsoft.azure.datalake.store.oauth2.AzureADAuthenticator.getTokenUsingClientCreds(authTokenEndpoint, clientId, clientKey)
 
     calendar = java.util.Calendar.getInstance()
@@ -157,7 +161,7 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
     options = com.microsoft.azure.datalake.store.ADLStoreOptions.new()
     options.setUserAgentSuffix("Logstash-ADLS-Output-Plugin")
     client.setOptions(options)
-    client.checkExists("testFile") # Test the Client to make sure it works. The return value is irrelevant. 
+    client.checkExists(testPath) # Test the Client to make sure it works. The return value is irrelevant. 
     client
   end
 
@@ -209,7 +213,7 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
 
   def write_data(path, data)
     begin
-      #@logger.info("Trying to write at #{path}")
+      @logger.info("Trying to write at #{path}")
       adlsClient = @client
       
       # Try to append to already existing file, which will work most of the times.
