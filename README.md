@@ -44,6 +44,7 @@ bin/logstash-plugin install /your/local/logstash-output-adls-x.x.x.gem
      adls_client_id => "00000000-0000-0000-0000-000000000000"                                 # (required)
      adls_client_key => "XXXXXXXXXXXXXXXXXXXXXX"                                              # (required)
      path => "/logstash/%{+YYYY}/%{+MM}/%{+dd}/logstash-%{+HH}-%{[@metadata][cid]}.log"       # (required)
+     test_path => "testfile"                                                                  # (optional, default "testfile")
      line_separator => "\n"                                                                   # (optional, default: "\n")
      created_files_permission => 755                                                          # (optional, default: 755)
      adls_token_expire_security_margin => 300                                                 # (optional, default: 300)
@@ -66,6 +67,7 @@ bin/logstash-plugin install /your/local/logstash-output-adls-x.x.x.gem
 | `adls_client_id` | yes | | Azure DLS ClientID |
 | `adls_client_key` | yes | | Azure DLS ClientKey |
 | `path` | yes | | The path to the file to write to. Event fields can be used here, as well as date fields in the joda time format, e.g.: `/logstash/%{+YYYY-MM-dd}/logstash-%{+HH}-%{[@metadata][cid]}.log` |
+| `test_path` | no | `testfile` | Path to test access on ADLS. This is used upon startup to ensure you have write access. |
 | `line_separator` | no | `\n` | Line separator for events written |
 | `created_files_permission` | no | 755 | File permission for files created |
 | `adls_token_expire_security_margin` | no | 300 | The security margin (in seconds) that shoud be subtracted to the token's expire value to calculate when the token shoud be renewed. (i.e. If the Oauth token expires in 1hour, it will be renewed in "1hour -adls_token_expire_security_margin " |

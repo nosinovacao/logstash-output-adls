@@ -208,12 +208,11 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
       end 
     end
     @logger.debug("#{events.length.to_s} events written on ADLS in #{Time.now-timeElapsed} seconds.")
-
   end
 
   def write_data(path, data)
     begin
-      @logger.info("Trying to write at #{path}")
+      @logger.debug("Trying to write at #{path}")
       adlsClient = @client
       
       # Try to append to already existing file, which will work most of the times.
@@ -233,11 +232,8 @@ class LogStash::Outputs::ADLS < LogStash::Outputs::Base
         createStream.close()
         @logger.debug("File #{path} created.")
       else
-         raise e  
+        raise e  
       end           
     end
-    #@logger.info("Data written to ADLS: #{data}")
-
-  end
-        
+  end 
 end
