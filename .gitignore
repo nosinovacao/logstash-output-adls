@@ -1,7 +1,5 @@
-lib/*
-!lib/logstash
-vendor/
-.mvm/
-*.lock
 *.gem
+Gemfile.lock
+.bundle
+.idea/
 /debug.log
