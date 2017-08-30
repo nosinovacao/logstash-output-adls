@@ -24,3 +24,4 @@ if [ "$LOGSTASH_BRANCH" ]; then
 else
     echo "Building plugin using released gems on rubygems"
 fi
+

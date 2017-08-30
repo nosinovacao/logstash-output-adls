@@ -3,3 +3,4 @@ Gemfile.lock
 .bundle
 .idea/
 /debug.log
+.vscode

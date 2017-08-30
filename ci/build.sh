@@ -19,3 +19,4 @@ else
     bundle exec rake vendor
     bundle exec rspec spec
 fi
+
