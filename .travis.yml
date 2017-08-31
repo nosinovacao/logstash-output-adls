@@ -1,0 +1,28 @@
+sudo: false
+language: ruby
+cache: bundler
+env: 
+rvm:
+- jruby-1.7.25
+matrix:
+  include:
+  - rvm: jruby-9.1.10.0
+    env: LOGSTASH_BRANCH=master
+  - rvm: jruby-9.1.10.0
+    env: LOGSTASH_BRANCH=6.x
+  - rvm: jruby-1.7.25
+    env: LOGSTASH_BRANCH=5.6
+  fast_finish: true
+install: true
+script: ci/build.sh
+jdk: oraclejdk8
+deploy:
+  provider: rubygems
+  api_key:
+    secure: 7Vf5+v5rv7NGF2DJVpFVmzdzMO842FDPnBza/3lOfjn8MIvT4M7jcfkMt9FMXJ58WEylBRaRieB6GgiVqjWvp1H1rd1W1TKLiHvq5LrsqF4nP76go+cPX+LQ4x7PK5oxbVoDTtIR95QySeAjDKmAYa52o3v/cu3vbtj1+c39HICrN/KHnhqWdvg4iazCn4XWnCw4+W7myuaEfzXS7CcBMh8Lgvho533cLxif/JA2/eZZcaB8nscJcMgCUMJLlVzuWFJLGBhYgroYxwA35iFr2yh4paCHD5g6xwek9q+puPiDVdcqHPgn1sf6yisP5oHSHxx3W4z7uwcP8QCLTpnaZNY3E+74Z6gaG8GDazZ24okWO4aCST/IXn2sNESpfRFQJyMPYJI9vW1HnSHZZRkvGH/E+ozzCPNhr0urzI725rSwwwGZyXZfz33WO6fMhYLYSbUXwuedJh7sYd7AxTHyi9qlxQ+JmKqwog6Ksxd+gxHrc0kO0EY6jyJciBo2BVgPtut+VPb1cJMgoXTGxR0jKS35d1s9ujXUFuhJgIMRSwBKattUbwuOdN5ROV4yhTLVwy+2P6RMMaVncDUobFQd7Kg2VxTottdthP6+I8/x9lyflCI/4wA8o1oENO9MbG6ty9ArvmMPGMCYu3rQKsYKEA+KUH+8jX4oEOE1eT8PIFU=
+  gemspec: logstash-output-adls.gemspec
+  on:
+    tags: true
+    rvm: jruby-1.7.25
+    condition: -z "$LOGSTASH_SOURCE"
+    repo: nosinovacao/logstash-output-adls
