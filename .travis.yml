@@ -23,4 +23,6 @@ deploy:
   gemspec: logstash-output-adls.gemspec
   on:
     tags: true
+    rvm: jruby-1.7.25
+    condition: -z "$LOGSTASH_SOURCE"
     repo: nosinovacao/logstash-output-adls
