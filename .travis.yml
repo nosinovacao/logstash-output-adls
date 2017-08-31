@@ -1,7 +1,7 @@
 sudo: false
 language: ruby
 cache: bundler
-env: 
+env:
 rvm:
 - jruby-1.7.25
 matrix:
@@ -24,5 +24,4 @@ deploy:
   on:
     tags: true
     rvm: jruby-1.7.25
-    condition: -z "$LOGSTASH_SOURCE"
     repo: nosinovacao/logstash-output-adls
