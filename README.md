@@ -91,6 +91,37 @@ This plugin relies only on Logstash concurrency/batching facilities and can conf
 
 ## Build & Development
 
+### Build using Docker
+
+- If you want to use Docker to build, you can use Windows or Linux variants.
+- Execute the following commands in your project folder
+- The main advantage of using the method below, is that the container will preserve its state until it is removed, making subsequent `bundle install` commands much faster.
+
+**Windows (powershell):**
+```powershell
+# Start the container (it will stop once you exit it)
+"docker run -it -v $($pwd -replace "\\", "/")/:/project/ -w /project/ --name jruby jruby:latest bash" | Invoke-Expression
+
+# Start it again (it should stay up now)
+docker start jruby
+
+# Enter the container shell and execute the usual build commands
+docker exec -it jruby bash
+```
+
+**Linux**
+```sh
+# Start the container (it will stop once you exit it)
+docker run -it -v $pwd:/project -w /project --name jruby jruby:latest bash
+
+# Start it again (it should stay up now)
+docker start jruby
+
+# Enter the container shell and execute the usual build commands
+docker exec -it jruby bash
+```
+
+
 ### Build
 - To get started, you'll need JRuby with the Bundler and Rake gems installed.
 

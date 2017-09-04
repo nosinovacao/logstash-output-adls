@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
 
   s.name            = 'logstash-output-adls'
   s.version         = '1.2.0'
-  s.version         = "#{s.version}.pre.#{ENV['TRAVIS_BUILD_NUMBER']}" if ENV['TRAVIS_TAG'] =~ /pre/i
+  s.version         = "#{s.version}.rc#{ENV['TRAVIS_TAG'][/-rc(.*)/i,1]}" if ENV['TRAVIS_TAG'] =~ /-rc(.*)/i
   s.licenses        = ['Apache-2.0']
   s.summary         = "Plugin to write events to Azure Data Lake Store (ADLS)"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
