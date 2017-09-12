@@ -1,32 +1,15 @@
 # Azure Data Lake Store Output Logstash Plugin
 
+
+[![Travis Build Status](https://travis-ci.org/nosinovacao/logstash-output-adls.svg)](https://travis-ci.org/nosinovacao/logstash-output-adls)
+
 This is a Azure Data Laka Store Output Plugin for [Logstash](https://github.com/elastic/logstash).
 
 This plugin uses the official [Microsoft Data Lake Store Java SDK](https://github.com/Azure/azure-data-lake-store-java) with their custom [AzureDataLakeFilesystem - ADL](https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-overview#what-is-azure-data-lake-store-file-system-adl) protocol, which Microsoft claims is more efficient than WebHDFS.
 
 It is fully free and fully open source. The license is Apache 2.0, meaning you are pretty much free to use it however you want in whatever way.
 
-## Installing
-
-```sh
-bin/logstash-plugin install logstash-output-adls
-```
-
-### Manual installation on a already deployed Logstash:
-
-You can install the plugin on a already deployed Logstash and avoid messing with the Logstash Gemfile. 
-Please note that in this mode you can't alter the plugin source (logstash-output-adls/lib/logstash/outputs/adls.rb) without rebuilding the gem, which makes sense for a production deploy.
-
-Note that you'll need an already built gem file from the previous step.
-
-- Copy logstash-output-adls-x.x.x.gem to your remote Logstash.
-- Install the package on your remote Logstash:
-
-```sh
-bin/logstash-plugin install /your/local/logstash-output-adls-x.x.x.gem
-```
-
-## Configuration
+## Documentation
 
 ### Configuration example:
 
@@ -89,9 +72,17 @@ This plugin relies only on Logstash concurrency/batching facilities and can conf
 - However, unless you have very high concurrency and/or a large batch size, these errors shouldn't be a problem.
 
 
-## Build & Development
+## Developing
 
-### Build using Docker
+### 1. Plugin Development and Testing
+
+To install, build and test, just run this command from the project's folder. If you want to deep-dive read into the next sections.
+
+```sh
+ci/build.sh
+```
+
+#### Build using Docker
 
 - If you want to use Docker to build, you can use Windows or Linux variants.
 - Execute the following commands in your project folder
@@ -122,7 +113,7 @@ docker exec -it jruby bash
 ```
 
 
-### Build
+#### Build
 - To get started, you'll need JRuby with the Bundler and Rake gems installed.
 
 - Install dependencies:
@@ -132,7 +123,7 @@ bundle install
 
 - Install Java dependencies from Maven:
 ```sh
-rake install_jars
+rake vendor
 ```
 
 - Build your plugin gem:
@@ -141,7 +132,28 @@ rake install_jars
 gem build logstash-output-adls.gemspec
 ```
 
-### Run in a local Logstash for development purposes.
+#### Test
+
+- Update your dependencies
+```
+bundle install
+```
+
+- Run unit tests
+```
+bundle exec rspec
+```
+
+- Run integration tests
+you'll need to have docker available within your test environment before running the integration tests. The tests depend on a specific Kafka image found in Docker Hub called spotify/kafka. You will need internet connectivity to pull in this image if it does not already exist locally.
+
+```
+bundle exec rspec --tag integration
+```
+
+### 2. Running your unpublished Plugin in Logstash
+
+#### Running your unpublished Plugin in Logstash
 
 - Edit Logstash `Gemfile` and add the local plugin path, for example:
 ```sh
@@ -150,5 +162,30 @@ gem "logstash-output-adls", :path => "/your/local/logstash-output-adls"
 
 - Install plugin:
 ```sh
+# Logstash 2.3 and higher
 bin/logstash-plugin install --no-verify
+
+# Prior to Logstash 2.3
+bin/plugin install --no-verify
 ```
+
+- Run Logstash with your plugin
+```sh
+bin/logstash -e 'input { stdin { } } output { adls { } }'
+```
+At this point any modifications to the plugin code will be applied to this local Logstash setup. After modifying the plugin, simply rerun Logstash.
+
+#### Run in an installed Logstash
+
+You can use the same **2.1** method to run your plugin in an installed Logstash by editing its `Gemfile` and pointing the `:path` to your local plugin development directory or you can build the gem and install it using:
+
+- Build your plugin gem
+```sh
+gem build logstash-filter-awesome.gemspec
+```
+- Install the plugin from the Logstash home
+```sh
+# Logstash 2.3 and higher
+bin/plugin install /your/local/plugin/logstash-output-adls.gem
+```
+- Start Logstash and proceed to test the plugin

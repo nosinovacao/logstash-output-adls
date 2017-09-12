@@ -5,3 +5,6 @@ Gemfile.lock
 /debug.log
 .vscode
 .mvn
+*.jar
+vendor
+logstash-output-adls_jars.rb
